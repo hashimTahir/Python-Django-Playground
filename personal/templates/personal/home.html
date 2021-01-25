@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+
+
+
+{% block content %}
+<div style="border: 2px solid #000000;">
+    <h1>This is the body from content</h1>
+    <p>here is where you put sfuff</p>
+
+    {% include 'personal/snippet/body_snippet.html' %}
+
+</div>
+{% endblock content %}
