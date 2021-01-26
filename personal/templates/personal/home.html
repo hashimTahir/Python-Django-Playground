@@ -14,9 +14,8 @@
         {{data_number}}
     </P>
     {% for item in list_name_dosent_matter_here %}
-    {{item}} <br>
+    {% include 'personal/snippet/body_snippet.html' with value=item %}
     {% endfor %}
-    {% include 'personal/snippet/body_snippet.html' %}
 
 </div>
 {% endblock content %}
