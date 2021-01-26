@@ -7,6 +7,15 @@
     <h1>This is the body from content</h1>
     <p>here is where you put sfuff</p>
 
+    <P>
+        {{data_string}}
+    </P>
+    <P>
+        {{data_number}}
+    </P>
+    {% for item in list_name_dosent_matter_here %}
+    {{item}} <br>
+    {% endfor %}
     {% include 'personal/snippet/body_snippet.html' %}
 
 </div>
