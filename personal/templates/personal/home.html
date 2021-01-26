@@ -13,8 +13,8 @@
     <P>
         {{data_number}}
     </P>
-    {% for item in list_name_dosent_matter_here %}
-    {% include 'personal/snippet/body_snippet.html' with value=item %}
+    {% for question in questions %}
+    {% include 'personal/snippet/body_snippet.html' with value=question %}
     {% endfor %}
 
 </div>
