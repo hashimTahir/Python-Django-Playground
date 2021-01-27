@@ -17,10 +17,10 @@ class Question(models.Model):
 
 
 # kinda like to string method in java
-def __str__(self):
-    return self.title
 
+    def __str__(self):
+        return self.title
 
-class Meta:
-    verbose_name = "The Question"
-    verbose_name_plural = "Peoples Question"
+    class Meta:
+        verbose_name = "The Question"
+        verbose_name_plural = "Peoples Question"
