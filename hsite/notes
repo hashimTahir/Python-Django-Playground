@@ -1,8 +1,0 @@
-pip freeze used to list all the libries used in the project.
-pip freeze > requirements.text    use this command to save all the list of libries
-            used in the project.
-
-pip install -r requirements.txt - will install everything in the file requirements.txt
-
-
-python manage.py startapp "app name"
