@@ -1,33 +1,12 @@
 from django.shortcuts import render
-from personal.models import Question
+from account.models import Account
 
 # Create your views here.
 
 
 def home_screen_view(request):
     context = {}
-    # Oneway
-    # context['data_string'] = "String that is to be passed to the view."
-    # context['data_number'] = 125663
-
-    # Other way
-
-    # context = {
-    #     'data_string': "String that is to be passed to the view.",
-    #     'data_number': 125663
-    # }
-
-    # Passs list of data
-
-    list_of_views = []
-    list_of_views.append("a")
-    list_of_views.append("b")
-    list_of_views.append("c")
-    list_of_views.append("ds")
-    context['list_name_dosent_matter_here'] = list_of_views
-
-    questions = Question.objects.all()
-    context['questions'] =  questions
-
+    accounts = Account.objects.all()
+    context['accounts'] = accounts
 
     return render(request, "personal/home.html", context)

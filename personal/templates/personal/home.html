@@ -13,9 +13,12 @@
     <P>
         {{data_number}}
     </P>
-    {% for question in questions %}
-    {% include 'personal/snippet/body_snippet.html' with value=question %}
+    {% for accout in accounts %}
+    <p>
+        {{accout}}
+
+    </p>
     {% endfor %}
 
-</div> 
+</div>
 {% endblock content %}
