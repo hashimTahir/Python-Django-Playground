@@ -18,8 +18,12 @@ from django.urls import path
 from personal.views import (
     home_screen_view,
 )
+from account.views import (
+    registation_view,
+)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('register/', registation_view, name="register"),
     path('', home_screen_view),
 ]
