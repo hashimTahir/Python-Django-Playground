@@ -33,6 +33,7 @@ ALLOWED_HOSTS = []
 INSTALLED_APPS = [
     # my apps
     'personal',
+    'account',
 
     # Django apps
     'django.contrib.admin',
@@ -70,6 +71,11 @@ TEMPLATES = [
         },
     },
 ]
+
+# Overrides the default behaviour thats build in for default user
+# django.
+AUTH_USER_MODEL = 'account.Account'
+
 
 WSGI_APPLICATION = 'hsite.wsgi.application'
 
