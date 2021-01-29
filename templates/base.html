@@ -3,9 +3,11 @@
 
 <head>
     <div style="border: 2px solid #000000;">
-        <h1>
-            This is the header.
-        </h1>
+        {% if request.user.is_authenticated %}
+        <p>Hello , {{request.user.username}} | <a href="{% url 'logout' %}">Logout</a></p>
+        {% else %}
+        <p><a href="{% url 'register' %}">Register</a> | <a href="#">Login</a></p>
+        {% endif %}
     </div>
 </head>
 
