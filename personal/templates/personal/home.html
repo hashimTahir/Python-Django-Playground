@@ -3,22 +3,14 @@
 
 
 {% block content %}
-<div style="border: 2px solid #000000;">
-    <h1>This is the body from content</h1>
-    <p>here is where you put sfuff</p>
+<h3>
+    Registered Users:
+</h3>
+{% for accout in accounts %}
+<p>
+    {{accout}}
 
-    <P>
-        {{data_string}}
-    </P>
-    <P>
-        {{data_number}}
-    </P>
-    {% for accout in accounts %}
-    <p>
-        {{accout}}
+</p>
+{% endfor %}
 
-    </p>
-    {% endfor %}
-
-</div>
 {% endblock content %}
