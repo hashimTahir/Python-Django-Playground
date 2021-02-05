@@ -36,6 +36,9 @@
         border-top-left-radius: 0;
         border-top-right-radius: 0;
     }
+    .h3{
+        text-align: center;
+    }
 </style>
 
 <form class="form-signin" method="post">{% csrf_token %}
@@ -60,6 +63,13 @@
     </div>
     {% endif %}
 
+    {% if succes_message %}
+    <p style="color: green;text-align: center;">
+        {{succes_message}}
+    </p>
+    {% endif %}
 
     <button class="w-100 btn btn-lg btn-primary" type="submit">Save Changes</button>
 </form>
+
+{% endblock content %}
