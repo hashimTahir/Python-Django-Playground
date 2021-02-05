@@ -3,22 +3,28 @@
 
 
 {% block content %}
-<div style="border: 2px solid #000000;">
-    <h1>This is the body from content</h1>
-    <p>here is where you put sfuff</p>
 
-    <P>
-        {{data_string}}
-    </P>
-    <P>
-        {{data_number}}
-    </P>
-    {% for accout in accounts %}
-    <p>
-        {{accout}}
 
-    </p>
-    {% endfor %}
-
+<div class="pricing-header px-3 py-3 pt-md-5 pb-md-4 mx-auto text-center">
+    <h1 class="display-4">Coding with Hashim</h1>
+    <p class="lead">Build a simple blog with python django framework</p>
 </div>
+
+<div class="container">
+    <div class="d-flex flex-column">
+        <h4>
+            Registered Users:
+        </h4>
+        {% for accout in accounts %}
+        <p>
+            {{accout}}
+        
+        </p>
+        {% endfor %}
+
+    </div>
+</div>
+
+
+
 {% endblock content %}

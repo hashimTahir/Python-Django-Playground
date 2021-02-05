@@ -2,23 +2,31 @@
 <html>
 
 <head>
-    <div style="border: 2px solid #000000;">
-        <h1>
-            This is the header.
-        </h1>
-    </div>
+
+    {% include 'snippets/header.html' %}
 </head>
 
 <body>
-    {% block content %}
-    {% endblock content %}
+
+    <style type="text/css"> 
+        .main {
+            min-height: 100vh;
+            height: 100%;
+        }
+    </style>
+
+    <div class="main">
+        {% block content %}
+        {% endblock content %}
+
+    </div>
+
+
+    {% include 'snippets/footer.html' %}
+
 </body>
 <footer>
-    <div style="border: 2px solid #000000;">
-        <h2>
-            this is the footer.
-        </h2>
-    </div>
+
 
 </footer>
 
