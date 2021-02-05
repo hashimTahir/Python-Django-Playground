@@ -3,14 +3,28 @@
 
 
 {% block content %}
-<h3>
-    Registered Users:
-</h3>
-{% for accout in accounts %}
-<p>
-    {{accout}}
 
-</p>
-{% endfor %}
+
+<div class="pricing-header px-3 py-3 pt-md-5 pb-md-4 mx-auto text-center">
+    <h1 class="display-4">Coding with Hashim</h1>
+    <p class="lead">Build a simple blog with python django framework</p>
+</div>
+
+<div class="container">
+    <div class="d-flex flex-column">
+        <h4>
+            Registered Users:
+        </h4>
+        {% for accout in accounts %}
+        <p>
+            {{accout}}
+        
+        </p>
+        {% endfor %}
+
+    </div>
+</div>
+
+
 
 {% endblock content %}
