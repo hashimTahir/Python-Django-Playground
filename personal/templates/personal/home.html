@@ -1,26 +1,86 @@
 {% extends 'base.html' %}
 
-
-
 {% block content %}
 
 
-<div class="pricing-header px-3 py-3 pt-md-5 pb-md-4 mx-auto text-center">
-    <h1 class="display-4">Coding with Hashim</h1>
-    <p class="lead">Build a simple blog with python django framework</p>
-</div>
+<style type="text/css">
+    @media (max-width: 768px) {
+        .right-column {
+            margin-left: 0px;
+        }
+    }
+
+    @media (min-width: 768px) {
+        .right-column {
+            margin-left: 20px;
+        }
+    }
+
+    .blog-post-container {
+        background-color: #fff;
+        margin-bottom: 20px;
+        width: 100%;
+    }
+
+    .create-post-bar {
+        background-color: #fff;
+        margin-bottom: 20px;
+    }
+
+    .left-column {
+        padding: 0px;
+    }
+
+    .right-column {
+        padding: 0px;
+    }
+</style>
+
 
 <div class="container">
-    <div class="d-flex flex-column">
-        <h4>
-            Registered Users:
-        </h4>
-        {% for accout in accounts %}
-        <p>
-            {{accout}}
-        
-        </p>
-        {% endfor %}
+    <div class="row">
+
+        <!-- Top bar -->
+        <div class="create-post-bar d-lg-none col-lg-7 offset-lg-1">
+        </div>
+        <!-- end bar -->
+
+
+        <!-- blogs  -->
+        <div class="left-column col-lg-7 offset-lg-1">
+
+            <div class="blog-post-container">
+                <p>Test Blog 1</p>
+            </div>
+
+            <div class="blog-post-container">
+                <p>Test Blog 2</p>
+            </div>
+
+            <div class="blog-post-container">
+                <p>Test Blog 3</p>
+            </div>
+
+            <div class="blog-post-container">
+                <p>Test Blog 4</p>
+            </div>
+
+        </div>
+        <!-- end blog feed -->
+
+
+        <!-- Right 'create post' column  -->
+        <div class="right-column col-lg-3 d-lg-flex d-none flex-column">
+
+            <div class="create-post-bar">
+                <p>Test 1</p>
+                <p>Test 2</p>
+                <p>Test 3</p>
+                <p>Test 4</p>
+            </div>
+
+        </div>
+        <!-- end Right 'create post' column  -->
 
     </div>
 </div>
