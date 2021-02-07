@@ -13,3 +13,4 @@ python manage.py makemigrations
 python manage.py migrate
 
 
+collectstatic  copies the static file to static_cdn folder. (Content delivery network)
