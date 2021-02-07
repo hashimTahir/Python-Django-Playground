@@ -40,47 +40,49 @@
 <div class="container">
     <div class="row">
 
-        <!-- Top bar -->
+        <!-- Top  bar -->
         <div class="create-post-bar d-lg-none col-lg-7 offset-lg-1">
+            <p><a href="{% url 'blog:create' %}">Create blog post</a></p>
         </div>
-        <!-- end bar -->
+        <!-- end Top  bar -->
 
 
-        <!-- blogs  -->
+        <!-- blog feed -->
         <div class="left-column col-lg-7 offset-lg-1">
 
             <div class="blog-post-container">
-                <p>Test Blog 1</p>
+                <p>Blog 1</p>
             </div>
 
             <div class="blog-post-container">
-                <p>Test Blog 2</p>
+                <p>Blog 2</p>
             </div>
 
             <div class="blog-post-container">
-                <p>Test Blog 3</p>
+                <p>Blog 3</p>
             </div>
 
             <div class="blog-post-container">
-                <p>Test Blog 4</p>
+                <p>Blog 4</p>
             </div>
 
         </div>
         <!-- end blog feed -->
 
 
-        <!-- Right 'create post' column  -->
-        <div class="right-column col-lg-3 d-lg-flex d-none flex-column">
+        <!-- Right 'create blog post' column  -->
+        <div class="right-column col-lg-3 d-lg-flex d-none flex-column" >
 
             <div class="create-post-bar">
-                <p>Test 1</p>
-                <p>Test 2</p>
-                <p>Test 3</p>
-                <p>Test 4</p>
+                <p>Blog 1</p>
+                <p>Blog 2</p>
+                <p>Blog 3</p>
+                <p>Blog 4</p>
+                <p><a href="{% url 'blog:create' %}">Create post</a></p>
             </div>
 
         </div>
-        <!-- end Right 'create post' column  -->
+        <!-- end Right 'create blog post' column  -->
 
     </div>
 </div>
