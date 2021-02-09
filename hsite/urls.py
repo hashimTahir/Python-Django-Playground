@@ -23,7 +23,7 @@ from personal.views import (
     home_screen_view,
 )
 from account.views import (
-    registation_view,
+    registration_view,
     logout_view,
     login_view,
     account_view,
@@ -32,7 +32,7 @@ from account.views import (
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('register/', registation_view, name="register"),
+    path('register/', registration_view, name="register"),
     path('logout/', logout_view, name="logout"),
     path('login/', login_view, name="login"),
     path('must_authenticate/', must_authenticate_view, name="must_authenticate"),

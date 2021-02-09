@@ -4,29 +4,29 @@ from blog.models import BlogPost
 from account.forms import AccountAuthenticationForm, AccountUpdateForm, RegistrationForm
 
 
-def registation_view(request):
+def registration_view(request):
     context = {}
     if request.POST:
         form = RegistrationForm(request.POST)
-        if(form.is_valid):
-            form.save
+        if form.is_valid():
+            form.save()
             email = form.cleaned_data.get('email')
             raw_password = form.cleaned_data.get('password1')
             account = authenticate(email=email, password=raw_password)
             login(request, account)
             return redirect('home')
-        else:  # Not valid
+        else:
             context['registration_form'] = form
 
-    else:  # get request
+    else:
         form = RegistrationForm()
         context['registration_form'] = form
-        return render(request, 'account/register.html', context)
+    return render(request, 'account/register.html', context)
 
 
 def logout_view(request):
     logout(request)
-    return redirect('home')
+    return redirect('/')
 
 
 def login_view(request):
@@ -52,15 +52,17 @@ def login_view(request):
         form = AccountAuthenticationForm()
 
     context['login_form'] = form
-    return render(request, 'account/login.html', context)
+
+    # print(form)
+    return render(request, "account/login.html", context)
 
 
 def account_view(request):
+
     if not request.user.is_authenticated:
         return redirect("login")
 
     context = {}
-
     if request.POST:
         form = AccountUpdateForm(request.POST, instance=request.user)
         if form.is_valid():
@@ -69,20 +71,22 @@ def account_view(request):
                 "username": request.POST['username'],
             }
             form.save()
-            context['succes_message'] = "Account updated"
-        else:
-            form = AccountUpdateForm(
-                initial={
-                    "email": request.user.email,
-                    "username": request.user.username
-                }
-            )
-        context['account_form'] = form
+            context['success_message'] = "Updated"
+    else:
+        form = AccountUpdateForm(
 
-        blog_posts = BlogPost.objects.filter(author=request.user)
-        context['blog_posts'] = blog_posts
+            initial={
+                "email": request.user.email,
+                "username": request.user.username,
+            }
+        )
 
-    return render(request, 'account/account.html', context)
+    context['account_form'] = form
+
+    blog_posts = BlogPost.objects.filter(author=request.user)
+    context['blog_posts'] = blog_posts
+
+    return render(request, "account/account.html", context)
 
 
 def must_authenticate_view(request):
