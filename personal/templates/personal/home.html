@@ -3,36 +3,37 @@
 
 {% block content %}
 <style type="text/css">
-
-	@media (max-width: 768px) { 
-		.right-column{
+	@media (max-width: 768px) {
+		.right-column {
 			margin-left: 0px;
 		}
 	}
 
-	@media (min-width: 768px) { 
-		.right-column{
+	@media (min-width: 768px) {
+		.right-column {
 			margin-left: 20px;
 		}
 	}
 
-	.blog-post-container{
+	.blog-post-container {
 		margin-bottom: 20px;
 		width: 100%;
 	}
-	.create-post-bar{
+
+	.create-post-bar {
 		background-color: #fff;
-		margin-bottom:20px;
+		margin-bottom: 20px;
 	}
 
-	.left-column{
-		padding:0px;
+	.left-column {
+		padding: 0px;
 	}
 
-	.right-column{
-		padding:0px;
+	.right-column {
+		padding: 0px;
 	}
-	.lead{
+
+	.lead {
 		font-size: 17px;
 	}
 </style>
@@ -45,7 +46,8 @@
 			<!-- Top 'create post' bar -->
 			<div class="d-lg-none mb-3">
 				<div class="card m-auto d-flex flex-column p-3">
-					<img class="img-fluid d-block m-auto pb-2" src="{% static 'codingwithhas.png' %}" width="72" height="72">
+					<img class="img-fluid d-block m-auto pb-2" src="{% static 'codingwithhas.png' %}" width="72"
+						height="72">
 					<p class="lead">Testing the blog feed</p>
 					<p class="m-auto"><a class="btn btn-primary" href="{% url 'blog:create' %}">Create post</a></p>
 				</div>
@@ -53,11 +55,20 @@
 			<!-- end Top 'create post' bar -->
 
 			<!-- Blog posts-->
+
+			{% if blog_posts %}
 			{% for post in blog_posts %}
-				<div class="blog-post-container">
-					{% include 'blog/snippets/blog_post_snippet.html' with blog_post=post %}
-				</div>
+			<div class="blog-post-container">
+				{% include 'blog/snippets/blog_post_snippet.html' with blog_post=post %}
+			</div>
 			{% endfor %}
+
+			{% else %}
+
+			<div class="blog-post-container">
+				{% include 'blog/snippets/blog_post_snippet.html' with query=query %}
+			</div>
+			{% endif %}
 			<!-- End Blog posts-->
 		</div>
 		<!-- end blog feed -->
@@ -67,11 +78,12 @@
 		<div class="right-column col-lg-3 d-lg-flex d-none flex-column">
 
 			<div class="card create-post-bar d-flex flex-column p-3">
-				<img class="img-fluid d-block m-auto pb-2" src="{% static 'coding_hashim_logo.png' %}" width="72" height="72">
+				<img class="img-fluid d-block m-auto pb-2" src="{% static 'coding_hashim_logo.png' %}" width="72"
+					height="72">
 				<p class="lead">Testing the blog feed</p>
 				<p class="m-auto"><a class="btn btn-primary" href="{% url 'blog:create' %}">Create post</a></p>
 			</div>
-		
+
 		</div>
 		<!-- end Right 'create post' column  -->
 
