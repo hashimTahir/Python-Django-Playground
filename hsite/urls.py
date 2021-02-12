@@ -43,6 +43,7 @@ urlpatterns = [
 
     # Rest framework urls
     path('api/blog/', include('blog.api.urls', 'blog_apis')),
+     path('api/account/', include('account.api.urls', 'account_api')),
 
 
 
