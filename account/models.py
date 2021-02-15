@@ -1,5 +1,9 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
+from django.conf import settings
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+from rest_framework.authtoken.models import Token
 
 
 # Recommended in django docs to create Account manager
@@ -45,8 +49,7 @@ class Account(AbstractBaseUser):
     is_superuser = models.BooleanField(default=False)
 
 
-
-# Anything field that is required to login like email, first name 
+# Anything field that is required to login like email, first name
 # must be put in USERNAME_FIELD
 
     USERNAME_FIELD = 'email'
@@ -64,3 +67,9 @@ class Account(AbstractBaseUser):
     # Does this user have permission to view this app? (ALWAYS YES FOR SIMPLICITY)
     def has_module_perms(self, app_label):
         return True
+
+
+@receiver(post_save, sender=settings.AUTH_USER_MODEL)
+def create_auth_token(sender, instance=None, created=False, **kwargs):
+    if created:
+        Token.objects.create(user=instance)
