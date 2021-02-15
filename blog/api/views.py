@@ -1,6 +1,7 @@
 from rest_framework import status
 from rest_framework.response import Response
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated
 
 from account.models import Account
 from blog.models import BlogPost
@@ -15,6 +16,7 @@ CREATE_SUCCESS = 'created'
 
 
 @api_view(['GET', ])
+@permission_classes((IsAuthenticated, ))
 def api_detail_blog_view(request, slug):
 
     try:
@@ -28,12 +30,18 @@ def api_detail_blog_view(request, slug):
 
 
 @api_view(['PUT', ])
+@permission_classes((IsAuthenticated, ))
 def api_update_blog_view(request, slug):
 
     try:
         blog_post = BlogPost.objects.get(slug=slug)
     except BlogPost.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
+
+# after authentication user accessed with token provided
+    user = request.user
+    if blog_post.author != user:
+        return Response({'response': "You don't have permission to edit that."})
 
     if request.method == 'PUT':
         serializer = BlogPostSerializer(blog_post, data=request.data)
@@ -46,12 +54,17 @@ def api_update_blog_view(request, slug):
 
 
 @api_view(['DELETE', ])
+@permission_classes((IsAuthenticated, ))
 def api_delete_blog_view(request, slug):
 
     try:
         blog_post = BlogPost.objects.get(slug=slug)
     except BlogPost.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
+
+    user = request.user
+    if blog_post.author != user:
+        return Response({'response': "You don't have permission to edit that."})
 
     if request.method == 'DELETE':
         operation = blog_post.delete()
@@ -62,10 +75,11 @@ def api_delete_blog_view(request, slug):
 
 
 @api_view(['POST'])
+@permission_classes((IsAuthenticated, ))
 def api_create_blog_view(request):
 
-    # For testing only pass the static account later to be replaced by auth token
-    account = Account.objects.get(pk=1)
+
+    account = request.user
 
     blog_post = BlogPost(author=account)
 
