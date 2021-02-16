@@ -2,10 +2,13 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
-
+from rest_framework.authentication import TokenAuthentication
 from account.models import Account
 from blog.models import BlogPost
 from blog.api.serializers import BlogPostSerializer
+
+from rest_framework.pagination import PageNumberPagination
+from rest_framework.generics import ListAPIView
 
 
 SUCCESS = 'success'
@@ -78,7 +81,6 @@ def api_delete_blog_view(request, slug):
 @permission_classes((IsAuthenticated, ))
 def api_create_blog_view(request):
 
-
     account = request.user
 
     blog_post = BlogPost(author=account)
@@ -90,3 +92,15 @@ def api_create_blog_view(request):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+# Url: https://<your-domain>/api/blog/list
+# Headers: Authorization: Token <token>
+
+# Class based view
+class ApiBlogListView(ListAPIView):
+    queryset = BlogPost.objects.all()
+    serializer_class = BlogPostSerializer
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticated,)
+    pagination_class = PageNumberPagination
