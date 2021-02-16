@@ -6,7 +6,7 @@ from rest_framework.authentication import TokenAuthentication
 from account.models import Account
 from blog.models import BlogPost
 from blog.api.serializers import BlogPostSerializer
-
+from rest_framework.filters import SearchFilter, OrderingFilter
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.generics import ListAPIView
 
@@ -98,9 +98,15 @@ def api_create_blog_view(request):
 # Headers: Authorization: Token <token>
 
 # Class based view
+
+# ?search
+# ?order
 class ApiBlogListView(ListAPIView):
     queryset = BlogPost.objects.all()
     serializer_class = BlogPostSerializer
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
     pagination_class = PageNumberPagination
+    filter_backends = (SearchFilter, OrderingFilter)
+    # author is the model use __ to specify the specific field in that model 
+    search_fields = ('title', 'body', 'author__username')
