@@ -84,6 +84,63 @@ class BlogPostUpdateSerializer(serializers.ModelSerializer):
             pass
         return blog_post
 
+
+class BlogPostCreateSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = BlogPost
+        fields = ['title', 'body', 'image', 'date_updated', 'author']
+
+    def save(self):
+
+        try:
+            image = self.validated_data['image']
+            title = self.validated_data['title']
+            if len(title) < MIN_TITLE_LENGTH:
+                raise serializers.ValidationError(
+                    {"response": "Enter a title longer than " + str(MIN_TITLE_LENGTH) + " characters."})
+
+            body = self.validated_data['body']
+            if len(body) < MIN_BODY_LENGTH:
+                raise serializers.ValidationError(
+                    {"response": "Enter a body longer than " + str(MIN_BODY_LENGTH) + " characters."})
+
+            blog_post = BlogPost(
+                author=self.validated_data['author'],
+                title=title,
+                body=body,
+                image=image,
+            )
+
+            url = os.path.join(settings.TEMP, str(image))
+            storage = FileSystemStorage(location=url)
+
+            with storage.open('', 'wb+') as destination:
+                for chunk in image.chunks():
+                    destination.write(chunk)
+                destination.close()
+
+            if sys.getsizeof(image.file) > IMAGE_SIZE_MAX_BYTES:
+                os.remove(url)
+                raise serializers.ValidationError(
+                    {"response": "That image is too large. Images must be less than 3 MB. Try a different image."})
+
+            img = cv2.imread(url)
+            dimensions = img.shape  # gives: (height, width, ?)
+
+            aspect_ratio = dimensions[1] / dimensions[0]  # divide w / h
+            if aspect_ratio < 1:
+                os.remove(url)
+                raise serializers.ValidationError(
+                    {"response": "Image height must not exceed image width. Try a different image."})
+
+            os.remove(url)
+            blog_post.save()
+            return blog_post
+        except KeyError:
+            raise serializers.ValidationError(
+                {"response": "You must have a title, some content, and an image."})
+
     # https://www.django-rest-framework.org/
     # There are two type of serilizers. General and model.
     # general serilizers are much more customizable.

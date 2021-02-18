@@ -1,3 +1,4 @@
+from blog.api.serializers import BlogPostUpdateSerializer
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
@@ -9,7 +10,9 @@ from blog.api.serializers import BlogPostSerializer
 from rest_framework.filters import SearchFilter, OrderingFilter
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.generics import ListAPIView
+from blog.api.serializers import BlogPostCreateSerializer
 
+CREATE_SUCCESS = 'created'
 
 SUCCESS = 'success'
 ERROR = 'error'
@@ -31,43 +34,43 @@ def api_detail_blog_view(request, slug):
         serializer = BlogPostSerializer(blog_post)
         return Response(serializer.data)
 
-from blog.api.serializers import BlogPostUpdateSerializer
 
 # Url: https://<your-domain>/api/blog/<slug>/update
 # Headers: Authorization: Token <token>
-@api_view(['PUT',])
+
+@api_view(['PUT', ])
 @permission_classes((IsAuthenticated,))
 def api_update_blog_view(request, slug):
 
-	try:
-		blog_post = BlogPost.objects.get(slug=slug)
-	except BlogPost.DoesNotExist:
-		return Response(status=status.HTTP_404_NOT_FOUND)
+    try:
+        blog_post = BlogPost.objects.get(slug=slug)
+    except BlogPost.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
 
-	user = request.user
-	if blog_post.author != user:
-		return Response({'response':"You don't have permission to edit that."}) 
-		
-        # Not all the fields are required now.
-	if request.method == 'PUT':
-		serializer = BlogPostUpdateSerializer(blog_post, data=request.data, partial=True)
-		data = {}
-		if serializer.is_valid():
-			serializer.save()
-			data['response'] = UPDATE_SUCCESS
-			data['pk'] = blog_post.pk
-			data['title'] = blog_post.title
-			data['body'] = blog_post.body
-			data['slug'] = blog_post.slug
-			data['date_updated'] = blog_post.date_updated
-			image_url = str(request.build_absolute_uri(blog_post.image.url))
-			if "?" in image_url:
-				image_url = image_url[:image_url.rfind("?")]
-			data['image'] = image_url
-			data['username'] = blog_post.author.username
-			return Response(data=data)
-		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    user = request.user
+    if blog_post.author != user:
+        return Response({'response': "You don't have permission to edit that."})
 
+    # Not all the fields are required now.
+    if request.method == 'PUT':
+        serializer = BlogPostUpdateSerializer(
+            blog_post, data=request.data, partial=True)
+        data = {}
+        if serializer.is_valid():
+            serializer.save()
+            data['response'] = UPDATE_SUCCESS
+            data['pk'] = blog_post.pk
+            data['title'] = blog_post.title
+            data['body'] = blog_post.body
+            data['slug'] = blog_post.slug
+            data['date_updated'] = blog_post.date_updated
+            image_url = str(request.build_absolute_uri(blog_post.image.url))
+            if "?" in image_url:
+                image_url = image_url[:image_url.rfind("?")]
+            data['image'] = image_url
+            data['username'] = blog_post.author.username
+            return Response(data=data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 @api_view(['DELETE', ])
@@ -91,20 +94,33 @@ def api_delete_blog_view(request, slug):
         return Response(data=data)
 
 
+# Url: https://<your-domain>/api/blog/create
+# Headers: Authorization: Token <token>
 @api_view(['POST'])
-@permission_classes((IsAuthenticated, ))
+@permission_classes((IsAuthenticated,))
 def api_create_blog_view(request):
 
-    account = request.user
-
-    blog_post = BlogPost(author=account)
-
     if request.method == 'POST':
-        serializer = BlogPostSerializer(blog_post, data=request.data)
+
+        data = request.data
+        data['author'] = request.user.pk
+        serializer = BlogPostCreateSerializer(data=data)
+
         data = {}
         if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+            blog_post = serializer.save()
+            data['response'] = CREATE_SUCCESS
+            data['pk'] = blog_post.pk
+            data['title'] = blog_post.title
+            data['body'] = blog_post.body
+            data['slug'] = blog_post.slug
+            data['date_updated'] = blog_post.date_updated
+            image_url = str(request.build_absolute_uri(blog_post.image.url))
+            if "?" in image_url:
+                image_url = image_url[:image_url.rfind("?")]
+            data['image'] = image_url
+            data['username'] = blog_post.author.username
+            return Response(data=data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -122,5 +138,5 @@ class ApiBlogListView(ListAPIView):
     permission_classes = (IsAuthenticated,)
     pagination_class = PageNumberPagination
     filter_backends = (SearchFilter, OrderingFilter)
-    # author is the model use __ to specify the specific field in that model 
+    # author is the model use __ to specify the specific field in that model
     search_fields = ('title', 'body', 'author__username')
