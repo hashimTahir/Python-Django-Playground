@@ -13,10 +13,10 @@ def upload_location(instance, filename):
 
 
 class BlogPost(models.Model):
-    title = models.CharField(max_length=50, null=False, blank=False)
-    body = models.TextField(max_length=6000, null=False, blank=False)
+    title = models.CharField(max_length=50, null=False, blank=True)
+    body = models.TextField(max_length=6000, null=False, blank=True)
     image = models.ImageField(
-        upload_to=upload_location, null=False, blank=False)
+        upload_to=upload_location, null=False, blank=True)
     date_published = models.DateTimeField(
         auto_now_add=True, verbose_name="Date published")
     date_updated = models.DateTimeField(

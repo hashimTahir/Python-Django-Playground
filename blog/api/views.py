@@ -31,29 +31,43 @@ def api_detail_blog_view(request, slug):
         serializer = BlogPostSerializer(blog_post)
         return Response(serializer.data)
 
+from blog.api.serializers import BlogPostUpdateSerializer
 
-@api_view(['PUT', ])
-@permission_classes((IsAuthenticated, ))
+# Url: https://<your-domain>/api/blog/<slug>/update
+# Headers: Authorization: Token <token>
+@api_view(['PUT',])
+@permission_classes((IsAuthenticated,))
 def api_update_blog_view(request, slug):
 
-    try:
-        blog_post = BlogPost.objects.get(slug=slug)
-    except BlogPost.DoesNotExist:
-        return Response(status=status.HTTP_404_NOT_FOUND)
+	try:
+		blog_post = BlogPost.objects.get(slug=slug)
+	except BlogPost.DoesNotExist:
+		return Response(status=status.HTTP_404_NOT_FOUND)
 
-# after authentication user accessed with token provided
-    user = request.user
-    if blog_post.author != user:
-        return Response({'response': "You don't have permission to edit that."})
+	user = request.user
+	if blog_post.author != user:
+		return Response({'response':"You don't have permission to edit that."}) 
+		
+        # Not all the fields are required now.
+	if request.method == 'PUT':
+		serializer = BlogPostUpdateSerializer(blog_post, data=request.data, partial=True)
+		data = {}
+		if serializer.is_valid():
+			serializer.save()
+			data['response'] = UPDATE_SUCCESS
+			data['pk'] = blog_post.pk
+			data['title'] = blog_post.title
+			data['body'] = blog_post.body
+			data['slug'] = blog_post.slug
+			data['date_updated'] = blog_post.date_updated
+			image_url = str(request.build_absolute_uri(blog_post.image.url))
+			if "?" in image_url:
+				image_url = image_url[:image_url.rfind("?")]
+			data['image'] = image_url
+			data['username'] = blog_post.author.username
+			return Response(data=data)
+		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    if request.method == 'PUT':
-        serializer = BlogPostSerializer(blog_post, data=request.data)
-        data = {}
-        if serializer.is_valid():
-            serializer.save()
-            data[SUCCESS] = UPDATE_SUCCESS
-            return Response(data=data)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 @api_view(['DELETE', ])
