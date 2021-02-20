@@ -22,7 +22,7 @@
         {% endif %}
     </h5>
     <div class="search-bar mt-sm-2 mr-2">
-        <form method="get">
+        <form method="onsubmit=executeQuery();">
             <input class="form-control" type="text" name="q" id="id_q" placeholder="Search...">
         </form>
     </div>
@@ -46,5 +46,26 @@
 
 <!-- Not working by value attribute in the form. force it with javascript -->
 <script type="text/javascript">
-	document.getElementById("id_q").value = "{{query}}"
+    document.getElementById("id_q").value = "{{query}}"
+</script>
+
+
+
+<div class="search-bar mt-sm-2 mr-2">
+    <form onsubmit="return executeQuery();">
+        <input type="text" class="form-control" name="q" id="id_q" placeholder="Search...">
+    </form>
+</div>
+
+<script type="text/javascript">
+    document.getElementById("id_q").value = "{{query}}"
+</script>
+<script>
+    function executeQuery() {
+        var query = document.getElementById('id_q').value;
+        //   Replace with production domain.
+        window.location.replace("http://127.0.0.1:8000/?q=" + query)
+        return false
+    }
+
 </script>
