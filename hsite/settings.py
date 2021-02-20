@@ -92,6 +92,10 @@ TEMPLATES = [
 # Overrides the default behaviour thats build in for default user
 # django.
 AUTH_USER_MODEL = 'account.Account'
+AUTHENTICATION_BACKENDS = ( 
+    'django.contrib.auth.backends.AllowAllUsersModelBackend', 
+    'account.backends.CaseInsensitiveModelBackend',
+    )
 
 
 WSGI_APPLICATION = 'hsite.wsgi.application'
