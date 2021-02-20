@@ -140,3 +140,20 @@ class ApiBlogListView(ListAPIView):
     filter_backends = (SearchFilter, OrderingFilter)
     # author is the model use __ to specify the specific field in that model
     search_fields = ('title', 'body', 'author__username')
+
+
+api_view(['GET',])
+@permission_classes((IsAuthenticated,))
+def api_is_author_of_blogpost(request, slug):
+	try:
+		blog_post = BlogPost.objects.get(slug=slug)
+	except BlogPost.DoesNotExist:
+		return Response(status=status.HTTP_404_NOT_FOUND)
+
+	data = {}
+	user = request.user
+	if blog_post.author != user:
+		data['response'] = "You don't have permission to edit that."
+		return Response(data=data)
+	data['response'] = "You have permission to edit that."
+	return Response(data=data)
