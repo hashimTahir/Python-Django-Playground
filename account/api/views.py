@@ -1,72 +1,73 @@
 from rest_framework import status
 from rest_framework.response import Response
-from rest_framework.decorators import api_view
-from rest_framework.authtoken.models import Token
-from account.api.serializers import RegistrationSerializer
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
+from rest_framework.generics import UpdateAPIView
 from django.contrib.auth import authenticate
-from account.api.serializers import RegistrationSerializer, AccountPropertiesSerializer
+from rest_framework.authentication import TokenAuthentication
+from rest_framework.decorators import api_view, authentication_classes, permission_classes
+
+from account.api.serializers import RegistrationSerializer, AccountPropertiesSerializer, ChangePasswordSerializer
 from account.models import Account
 from rest_framework.authtoken.models import Token
 
-
-from rest_framework.decorators import api_view, authentication_classes, permission_classes
-
 # Register
 # Url: https://<your-domain>/api/account/register
+
+
 @api_view(['POST', ])
 @permission_classes([])
 @authentication_classes([])
 def registration_view(request):
 
-	if request.method == 'POST':
-		data = {}
-		email = request.data.get('email', '0').lower()
-		if validate_email(email) != None:
-			data['error_message'] = 'That email is already in use.'
-			data['response'] = 'Error'
-			return Response(data)
+    if request.method == 'POST':
+        data = {}
+        email = request.data.get('email', '0').lower()
+        if validate_email(email) != None:
+            data['error_message'] = 'That email is already in use.'
+            data['response'] = 'Error'
+            return Response(data)
 
-		username = request.data.get('username', '0')
-		if validate_username(username) != None:
-			data['error_message'] = 'That username is already in use.'
-			data['response'] = 'Error'
-			return Response(data)
+        username = request.data.get('username', '0')
+        if validate_username(username) != None:
+            data['error_message'] = 'That username is already in use.'
+            data['response'] = 'Error'
+            return Response(data)
 
-		serializer = RegistrationSerializer(data=request.data)
-		
-		if serializer.is_valid():
-			account = serializer.save()
-			data['response'] = 'successfully registered new user.'
-			data['email'] = account.email
-			data['username'] = account.username
-			data['pk'] = account.pk
-			token = Token.objects.get(user=account).key
-			data['token'] = token
-		else:
-			data = serializer.errors
-		return Response(data)
+        serializer = RegistrationSerializer(data=request.data)
+
+        if serializer.is_valid():
+            account = serializer.save()
+            data['response'] = 'successfully registered new user.'
+            data['email'] = account.email
+            data['username'] = account.username
+            data['pk'] = account.pk
+            token = Token.objects.get(user=account).key
+            data['token'] = token
+        else:
+            data = serializer.errors
+        return Response(data)
+
 
 def validate_email(email):
-	account = None
-	try:
-		account = Account.objects.get(email=email)
-	except Account.DoesNotExist:
-		return None
-	if account != None:
-		return email
+    account = None
+    try:
+        account = Account.objects.get(email=email)
+    except Account.DoesNotExist:
+        return None
+    if account != None:
+        return email
+
 
 def validate_username(username):
-	account = None
-	try:
-		account = Account.objects.get(username=username)
-	except Account.DoesNotExist:
-		return None
-	if account != None:
-		return username
-  
+    account = None
+    try:
+        account = Account.objects.get(username=username)
+    except Account.DoesNotExist:
+        return None
+    if account != None:
+        return username
 
 
 # Account properties
@@ -133,3 +134,53 @@ class ObtainAuthTokenView(APIView):
             context['error_message'] = 'Invalid credentials'
 
         return Response(context)
+
+
+@api_view(['GET', ])
+@permission_classes([])
+@authentication_classes([])
+def does_account_exist_view(request):
+
+    if request.method == 'GET':
+        email = request.GET['email'].lower()
+        data = {}
+        try:
+            account = Account.objects.get(email=email)
+            data['response'] = email
+        except Account.DoesNotExist:
+            data['response'] = "Account does not exist"
+        return Response(data)
+
+
+class ChangePasswordView(UpdateAPIView):
+
+    serializer_class = ChangePasswordSerializer
+    model = Account
+    permission_classes = (IsAuthenticated,)
+    authentication_classes = (TokenAuthentication,)
+
+    def get_object(self, queryset=None):
+        obj = self.request.user
+        return obj
+
+    def update(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        serializer = self.get_serializer(data=request.data)
+
+        if serializer.is_valid():
+            # Check old password
+            if not self.object.check_password(serializer.data.get("old_password")):
+                return Response({"old_password": ["Wrong password."]}, status=status.HTTP_400_BAD_REQUEST)
+
+            # confirm the new passwords match
+            new_password = serializer.data.get("new_password")
+            confirm_new_password = serializer.data.get("confirm_new_password")
+            if new_password != confirm_new_password:
+                return Response({"new_password": ["New passwords must match"]}, status=status.HTTP_400_BAD_REQUEST)
+
+            # set_password also hashes the password that the user will get
+            self.object.set_password(serializer.data.get("new_password"))
+            self.object.save()
+            return Response({"response": "successfully changed password"}, status=status.HTTP_200_OK)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
