@@ -23,7 +23,7 @@ def registration_view(request):
 
 	if request.method == 'POST':
 		data = {}
-		email = request.data.get('email', '0')
+		email = request.data.get('email', '0').lower()
 		if validate_email(email) != None:
 			data['error_message'] = 'That email is already in use.'
 			data['response'] = 'Error'
@@ -126,7 +126,7 @@ class ObtainAuthTokenView(APIView):
                 token = Token.objects.create(user=account)
             context['response'] = 'Successfully authenticated.'
             context['pk'] = account.pk
-            context['email'] = email
+            context['email'] = email.lower()
             context['token'] = token.key
         else:
             context['response'] = 'Error'

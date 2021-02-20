@@ -36,7 +36,7 @@ class AccountUpdateForm(forms.ModelForm):
         fields = ('email', 'username', )
 
     def clean_email(self):
-        email = self.cleaned_data['email']
+        email = self.cleaned_data['email'].lower()
         try:
             account = Account.objects.exclude(
                 pk=self.instance.pk).get(email=email)
